@@ -1,11 +1,11 @@
 var fs = require("fs");
 
 function inc(p, q){
-    if(q ==undefined) q =1;
+    if(q ==undefined) q =1; //not covered
 
-   if( p < 0 )
+   if( p < 0 ) //not covered
    {
-   	p = -p;
+   	p = -p;    //not covered
    }
 
     return p + q/q;
@@ -21,11 +21,11 @@ function fileTest(dir, filePath)
    if( fs.existsSync(filePath ))
    {
 		var buf = fs.readFileSync(filePath, "utf8");
-		if( buf.length > 0 )
+		if( buf.length > 0 )  //not covered
 		{
 			return true;
 		}
-		return false;
+		return false;  //not covered
 	}
 }
 
@@ -41,12 +41,12 @@ function normalize(phoneNumber) {
 function format(phoneNumber, formatString, options) 
 {
     // Normalize the phone number first unless not asked to do so in the options
-    if (!options || !options.normalize) {
+    if (!options || !options.normalize) {  //not covered
       phoneNumber = normalize(phoneNumber)
     };
 
-    for ( var i = 0, l = phoneNumber.length; i < l; i++ ) {
-      formatString = formatString.replace("N", phoneNumber[i]);
+    for ( var i = 0, l = phoneNumber.length; i < l; i++ ) {  //not covered
+      formatString = formatString.replace("N", phoneNumber[i]);  //not covered
     }
   
     return formatString;
@@ -57,9 +57,9 @@ function blackListNumber(phoneNumber)
 {
 	var num = format(phoneNumber, "(NNN) NNN-NNNN");
 	var area = num.substring(1,4);
-	if( area == "212" )
+	if( area == "212" )  //not covered
 	{
-		return true;
+		return true; //not covered
 	}
 	return false;
 }
