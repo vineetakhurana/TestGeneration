@@ -169,11 +169,8 @@ function generateTestCases()
 			var phone=faker.phone.phoneNumberFormat();
 			var format=faker.phone.phoneFormats();
 			var options=
-			{
-				toString:function(){return "{normalize:true}";},
-			}
-			
-			
+			{toString:function(){return "{normalize:true}";},}
+
 			content += "subject.{0}({1});\n".format(funcName, "'"+phone+"','"+format+"',"+options);
 			
 		}
@@ -189,14 +186,10 @@ function generateTestCases()
 		else
 		{
 			content += "subject.{0}({1});\n".format(funcName, args);
-			
 		}
 
 	}
-
-
 	fs.writeFileSync('test.js', content, "utf8");
-
 }
 
 function generateMockFsTestCases (pathExists,fileWithContent,funcName,args) 
