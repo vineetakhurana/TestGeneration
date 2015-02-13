@@ -59,7 +59,7 @@ function blackListNumber(phoneNumber)
 	var area = num.substring(1,4);
 	if( area == "212" )  //not covered
 	{
-		return true; //not covered
+		return true; //not
 	}
 	return false;
 }
