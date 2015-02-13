@@ -46,8 +46,7 @@ var mockFileLibrary =
 		pathContent: 
 		{	
   			file1: 'text content'
-  			//file2: '',
-		 }
+  		}
 		// pathContent2:
 		// {
 		// 	file1:''
@@ -135,13 +134,13 @@ function generateTestCases()
 		if( pathExists || fileWithContent)
 		{
 			 content += generateMockFsTestCases(pathExists,fileWithContent,funcName, args);
-			 //if file w/o content
+			
 				// Bonus...generate constraint variations test cases....
 				content += generateMockFsTestCases(!pathExists,!fileWithContent,funcName, args);
 				content += generateMockFsTestCases(!pathExists,fileWithContent,funcName, args);
 				content += generateMockFsTestCases(pathExists,!fileWithContent,funcName, args);
 				content += generateMockFsTestCases(!pathExists,fileWithContent,funcName, args);
-
+				 //if file w/o content
 				//content += generateMockFsTestCases(!pathExists,!fileWithContent,funcName, args);
 
 				//console.log(mockFileLibrary.fileWithContent.pathContent.file1);
@@ -163,26 +162,25 @@ function generateTestCases()
 			content += "subject.{0}({1});\n".format(funcName, "'-8','undefined'");
 			
 		}
-		else if(truevar|| falsevar)
+		//maintain order
+		else if(truevar || falsevar)
 		{
 
 			var phone=faker.phone.phoneNumberFormat();
 			var format=faker.phone.phoneFormats();
-			var options=
-			{toString:function(){return "{normalize:true}";},}
-
+			var options={toString:function(){return "{normalize:true}";},}
 			content += "subject.{0}({1});\n".format(funcName, "'"+phone+"','"+format+"',"+options);
 			
 		}
+		//maintain order
 		else if(!mycode)
 		{
 			// Emit simple test case.
 			var randomvar = faker.phone.phoneNumberFormat();
-			//content += "subject.{0}({1});\n".format(funcName, args);
 			content+= "subject.{0}({1});\n".format(funcName, "'212-113-669'");
 			content+="subject.{0}({1});\n".format(funcName, "'"+randomvar+"'");
 		}
-	
+
 		else
 		{
 			content += "subject.{0}({1});\n".format(funcName, args);
@@ -326,13 +324,10 @@ function constraints(filePath)
 				
 
 				if( child.type === 'BinaryExpression' && child.operator == ">")
-				
-					{
+				{
 							if( child.left.type == 'MemberExpression' && child.left.property.name=='length')
 							
 								{
-									// get expression from original source code:
-									//var expression = buf.substring(child.range[0], child.range[1]);
 									var rightHand = buf.substring(child.right.range[0], child.right.range[1])
 								
 									functionConstraints[funcName].constraints.push(
@@ -364,26 +359,22 @@ function constraints(filePath)
 							);
 					}
 
-				if(child.right.type=='UnaryExpression' && child.right.operator == "!"){
-					if(child.right.argument.type=='MemberExpression'){
-					functionConstraints[funcName].constraints.push(
-						{
-						ident: child.right.argument.object.name+'.'+child.right.argument.property.name,
-						value: true,
-						}
-						);
-					}
+					if(child.right.type=='UnaryExpression' && child.right.operator == "!"){
+							if(child.right.argument.type=='MemberExpression'){
+									functionConstraints[funcName].constraints.push(
+									{
+										ident: child.right.argument.object.name+'.'+child.right.argument.property.name,
+										value: true,
+									}
+									);
+								}
+							}
 				}
-			}
 
-					if( child.type === 'BinaryExpression' && child.operator == "<")
-				
-					{
+				if( child.type === 'BinaryExpression' && child.operator == "<")
+				{
 							if( child.left.type == 'MemberExpression' && child.left.property.name=='length')
-							
-								{
-									// get expression from original source code:
-									//var expression = buf.substring(child.range[0], child.range[1]);
+							{
 									var rightHand = buf.substring(child.right.range[0], child.right.range[1])
 									functionConstraints[funcName].constraints.push(
 											{
@@ -391,7 +382,7 @@ function constraints(filePath)
 												value: rightHand
 											});
 								}
-					}
+				}
 
 
 			if( child.type == "CallExpression" && 

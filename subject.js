@@ -1,3 +1,5 @@
+//not covered according to homework description
+//mising from my implementation
 var fs = require("fs");
 
 function inc(p, q){
@@ -25,7 +27,7 @@ function fileTest(dir, filePath)
 		{
 			return true;
 		}
-		return false;  //not covered
+		return false;  //not covered //missing
 	}
 }
 
