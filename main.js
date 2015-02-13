@@ -47,20 +47,15 @@ var mockFileLibrary =
 		{	
   			file1: 'text content'
   		}
-		// pathContent2:
-		// {
-		// 	file1:''
-		// }
-
-	 }
-	// fileWithoutContent:
-	// {
-	// 	pathContent: 
-	// 	{	
- //  			file2: ''
- //  			//file2: '',
-	// 	}
-	//}
+		
+	 },
+	 fileWithoutContent:
+	 {
+	 	pathContent: 
+	 	{	
+   			file1: ''
+   	 	}
+	}
 };
 
 
@@ -168,9 +163,8 @@ function generateTestCases()
 
 			var phone=faker.phone.phoneNumberFormat();
 			var format=faker.phone.phoneFormats();
-			var options={toString:function(){return "{normalize:true}";},}
+			var options = "{normalize:true}".toString();
 			content += "subject.{0}({1});\n".format(funcName, "'"+phone+"','"+format+"',"+options);
-			
 		}
 		//maintain order
 		else if(!mycode)
@@ -206,10 +200,10 @@ function generateMockFsTestCases (pathExists,fileWithContent,funcName,args)
 		for (var attrname in mockFileLibrary.fileWithContent) { mergedFS[attrname] = mockFileLibrary.fileWithContent[attrname]; }
 	}
 
-	// if( fileWithoutContent )
-	// {
-	// 	for (var attrname in mockFileLibrary.fileWithoutContent) { mergedFS[attrname] = mockFileLibrary.fileWithoutContent[attrname]; }
-	// }
+	 if( !fileWithContent )
+	 {
+	 	for (var attrname in mockFileLibrary.fileWithoutContent) { mergedFS[attrname] = mockFileLibrary.fileWithoutContent[attrname]; }
+	 }
 
 	testCase += 
 	"mock(" +
