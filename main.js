@@ -49,7 +49,7 @@ var mockFileLibrary =
   		}
 		
 	 },
-	 fileWithoutContent:
+	 fileWithNoContent:
 	 {
 	 	pathContent: 
 	 	{	
@@ -83,7 +83,7 @@ function generateTestCases()
 		// Handle global constraints...
 		var fileWithContent = _.some(constraints, {mocking: 'fileWithContent' });
 		var pathExists      = _.some(constraints, {mocking: 'fileExists' });
-		var fileWithoutContent = _.some(constraints, {mocking: 'fileWithoutContent' });
+		var fileWithNoContent = _.some(constraints, {mocking: 'fileWithNoContent' });
 
 		// var fileWithContent2 = _.some(constraints, {mocking: 'fileWithContent2' });
 		// var pathExists2      = _.some(constraints, {mocking: 'fileExists' });
@@ -112,15 +112,15 @@ function generateTestCases()
 		console.log(args)
 		if( pathExists || fileWithContent)
 		{
-			 	content += generateMockFsTestCases(pathExists,fileWithContent,!fileWithoutContent,funcName, args);
-				content += generateMockFsTestCases(!pathExists,fileWithContent,!fileWithoutContent,funcName, args);
+			 	content += generateMockFsTestCases(pathExists,fileWithContent,!fileWithNoContent,funcName, args);
+				content += generateMockFsTestCases(!pathExists,fileWithContent,!fileWithNoContent,funcName, args);
 				// Bonus...generate constraint variations test cases....
-				content += generateMockFsTestCases(!pathExists,!fileWithContent,!fileWithoutContent,funcName, args);
+				content += generateMockFsTestCases(!pathExists,!fileWithContent,!fileWithNoContent,funcName, args);
 				
-				content += generateMockFsTestCases(pathExists,!fileWithContent,!fileWithoutContent,funcName, args);
+				content += generateMockFsTestCases(pathExists,!fileWithContent,!fileWithNoContent,funcName, args);
 				//content += generateMockFsTestCases(pathExists,fileWithContent,!fileWithoutContent,funcName, args);
 				 //if file w/o content
-				content += generateMockFsTestCases(pathExists,!fileWithContent,fileWithoutContent,funcName, args);
+				content += generateMockFsTestCases(pathExists,!fileWithContent,fileWithNoContent,funcName, args);
 
 				//console.log(mockFileLibrary.fileWithContent.pathContent.file1);
 		}
@@ -168,7 +168,7 @@ function generateTestCases()
 	fs.writeFileSync('test.js', content, "utf8");
 }
 
-function generateMockFsTestCases (pathExists,fileWithContent,fileWithoutContent,funcName,args) 
+function generateMockFsTestCases (pathExists,fileWithContent,fileWithNoContent,funcName,args) 
 {
 	var testCase = "";
 	// Insert mock data based on constraints.
@@ -184,9 +184,9 @@ function generateMockFsTestCases (pathExists,fileWithContent,fileWithoutContent,
 		for (var attrname in mockFileLibrary.fileWithContent) { mergedFS[attrname] = mockFileLibrary.fileWithContent[attrname]; }
 	}
 
-	if( fileWithoutContent )
+	if( fileWithNoContent )
 	{
-	 	for (var attrname in mockFileLibrary.fileWithoutContent) { mergedFS[attrname] = mockFileLibrary.fileWithoutContent[attrname]; }
+	 	for (var attrname in mockFileLibrary.fileWithNoContent) { mergedFS[attrname] = mockFileLibrary.fileWithNoContent[attrname]; }
 	}
 
 	// if(!pathExists)
@@ -400,7 +400,7 @@ function constraints(filePath)
 								// A fake path to a file
 								ident: params[p],
 								value: "'pathContent/file1'",
-								mocking: 'fileWithoutContent'
+								mocking: 'fileWithNoContent'
 							});
 						}
 					}
