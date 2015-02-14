@@ -59,22 +59,6 @@ var mockFileLibrary =
 };
 
 
-// var mockFileLibrary2 = 
-// {
-// 	pathExists2:
-// 	{
-// 		'path1/fileExists': {}
-// 	},
-// 	fileWithoutContent:
-// 	{
-// 		pathContent2: 
-// 		{	
-//   			file2: '',
-//   			//file2: '',
-// 		}
-// 	}
-// };
-
 
 function generateTestCases()
 {
@@ -91,7 +75,7 @@ function generateTestCases()
 			//params[paramName] = '\'' + faker.phone.phoneNumber()+'\'';
 			params[paramName] = '\'\'';
 		}
-		//debugstmt
+		//debugstmt1
 		console.log( params );
 
 		// update parameter values based on known constraints.
@@ -99,7 +83,7 @@ function generateTestCases()
 		// Handle global constraints...
 		var fileWithContent = _.some(constraints, {mocking: 'fileWithContent' });
 		var pathExists      = _.some(constraints, {mocking: 'fileExists' });
-		//var fileWithoutContent = _.some(constraints, {mocking: 'fileWithoutcontent' });
+		var fileWithoutContent = _.some(constraints, {mocking: 'fileWithoutContent' });
 
 		// var fileWithContent2 = _.some(constraints, {mocking: 'fileWithContent2' });
 		// var pathExists2      = _.some(constraints, {mocking: 'fileExists' });
@@ -128,15 +112,15 @@ function generateTestCases()
 		console.log(args)
 		if( pathExists || fileWithContent)
 		{
-			 content += generateMockFsTestCases(pathExists,fileWithContent,funcName, args);
-			
+			 	content += generateMockFsTestCases(pathExists,fileWithContent,!fileWithoutContent,funcName, args);
+				content += generateMockFsTestCases(!pathExists,fileWithContent,!fileWithoutContent,funcName, args);
 				// Bonus...generate constraint variations test cases....
-				content += generateMockFsTestCases(!pathExists,!fileWithContent,funcName, args);
-				content += generateMockFsTestCases(!pathExists,fileWithContent,funcName, args);
-				content += generateMockFsTestCases(pathExists,!fileWithContent,funcName, args);
-				content += generateMockFsTestCases(!pathExists,fileWithContent,funcName, args);
+				content += generateMockFsTestCases(!pathExists,!fileWithContent,!fileWithoutContent,funcName, args);
+				
+				content += generateMockFsTestCases(pathExists,!fileWithContent,!fileWithoutContent,funcName, args);
+				//content += generateMockFsTestCases(pathExists,fileWithContent,!fileWithoutContent,funcName, args);
 				 //if file w/o content
-				//content += generateMockFsTestCases(!pathExists,!fileWithContent,funcName, args);
+				content += generateMockFsTestCases(pathExists,!fileWithContent,fileWithoutContent,funcName, args);
 
 				//console.log(mockFileLibrary.fileWithContent.pathContent.file1);
 		}
@@ -184,7 +168,7 @@ function generateTestCases()
 	fs.writeFileSync('test.js', content, "utf8");
 }
 
-function generateMockFsTestCases (pathExists,fileWithContent,funcName,args) 
+function generateMockFsTestCases (pathExists,fileWithContent,fileWithoutContent,funcName,args) 
 {
 	var testCase = "";
 	// Insert mock data based on constraints.
@@ -200,10 +184,15 @@ function generateMockFsTestCases (pathExists,fileWithContent,funcName,args)
 		for (var attrname in mockFileLibrary.fileWithContent) { mergedFS[attrname] = mockFileLibrary.fileWithContent[attrname]; }
 	}
 
-	 if( !fileWithContent )
-	 {
+	if( fileWithoutContent )
+	{
 	 	for (var attrname in mockFileLibrary.fileWithoutContent) { mergedFS[attrname] = mockFileLibrary.fileWithoutContent[attrname]; }
-	 }
+	}
+
+	// if(!pathExists)
+	// {
+	// 	for (var attrname in mockFileLibrary.pathNoExists) { mergedFS[attrname] = mockFileLibrary.pathNoExists[attrname]; }
+	// }
 
 	testCase += 
 	"mock(" +
@@ -273,10 +262,6 @@ function constraints(filePath)
 				{
 					if( child.left.type == 'Identifier' && params.indexOf( child.left.name ) > -1)
 					{
-						// get expression from original source code:
-						//var expression = buf.substring(child.range[0], child.range[1]);
-						//console.log("Hello"+child.right.range[0])
-						//	console.log(child.right.range[1])
 						var rightHand = buf.substring(child.right.range[0], child.right.range[1])
 						functionConstraints[funcName].constraints.push( 
 							{
@@ -334,6 +319,22 @@ function constraints(filePath)
 								}
 					}
 
+					if( child.type === 'BinaryExpression' && child.operator == "<")
+				{
+							if( child.left.type == 'MemberExpression' && child.left.property.name=='length')
+							
+								{
+									var rightHand = buf.substring(child.right.range[0], child.right.range[1])
+								
+									functionConstraints[funcName].constraints.push(
+											{
+												ident: child.left.object.name,
+												value: rightHand
+											});
+
+
+								}
+					}
 				if( child.type == 'LogicalExpression' && child.operator=="||")
 				{
 
@@ -365,20 +366,7 @@ function constraints(filePath)
 							}
 				}
 
-				if( child.type === 'BinaryExpression' && child.operator == "<")
-				{
-							if( child.left.type == 'MemberExpression' && child.left.property.name=='length')
-							{
-									var rightHand = buf.substring(child.right.range[0], child.right.range[1])
-									functionConstraints[funcName].constraints.push(
-											{
-												ident: child.left.object.name,
-												value: rightHand
-											});
-								}
-				}
-
-
+				
 			if( child.type == "CallExpression" && 
 					 child.callee.property &&
 					 child.callee.property.name =="readFileSync" )
@@ -400,23 +388,23 @@ function constraints(filePath)
 					
 				}
 
-				// if( child.type == "CallExpression" && 
-				// 	 child.callee.property &&
-				// 	 child.callee.property.name =="readFileSync" ) {
-				// for( var p =0; p < params.length; p++ )
-				// 	{
-				// 		if( child.arguments[0].name == params[p] )
-				// 		{
-				// 			functionConstraints[funcName].constraints.push( 
-				// 			{
-				// 				// A fake path to a file
-				// 				ident: params[p],
-				// 				value: "'pathContent2/file1'",
-				// 				mocking: 'fileWithContent'
-				// 			});
-				// 		}
-				// 	}
-				// }
+				if( child.type == "CallExpression" && 
+					 child.callee.property &&
+					 child.callee.property.name =="readFileSync" ) {
+				for( var p =0; p < params.length; p++ )
+					{
+						if( child.arguments[0].name == params[p] )
+						{
+							functionConstraints[funcName].constraints.push( 
+							{
+								// A fake path to a file
+								ident: params[p],
+								value: "'pathContent/file1'",
+								mocking: 'fileWithoutContent'
+							});
+						}
+					}
+				}
 
 
 
